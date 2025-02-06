@@ -27,7 +27,7 @@ HYBRID_SIGMA_LEVEL_NAMES = [
 # CMIP variable does have a time dimension, subsequent CMOR operations are
 # handled appropriately.
 TIME_DIMS = ["time", "time1", "time2"]
-
+VERTICAL_DIMS = ["plev19", "alevel", "alevhalf"]
 
 class BaseVarHandler:
     def __init__(
@@ -228,6 +228,9 @@ class VarHandler(BaseVarHandler):
         table_abs_path = os.path.join(tables_path, self.table)
         time_dim: str | None = self._get_var_time_dim(table_abs_path)
 
+        vert_dim: str | None = self._get_var_vertical_dim(table_abs_path)
+
+        
         # Assuming all year ranges are the same for every variable.
         # TODO: Is this a good keep this legacy assumption?
         num_files_per_variable = len(list(vars_to_filepaths.values())[0])
@@ -245,7 +248,7 @@ class VarHandler(BaseVarHandler):
             # referenced when writing out to a file with cmor.write()).
             logger.info(f"{self.name}: creating CMOR variable with CMOR axis objects.")
             cmor_axis_id_map, cmor_ips_id = self._get_cmor_axis_ids_and_ips_id(
-                ds=ds, time_dim=time_dim
+                ds=ds, time_dim=time_dim, vert_dim=vert_dim
             )
             cmor_axis_ids = list(cmor_axis_id_map.values())
             cmor_var_id = cmor.variable(
@@ -289,7 +292,7 @@ class VarHandler(BaseVarHandler):
         """
         for var, filepaths in vars_to_filespaths.items():
             if len(filepaths) == 0:
-                logging.error(f"{var}: Unable to find input files for {var}")
+                logging.error(f"{var}: Unable to find input files for {var} in {vars_to_filepaths}")
                 return False
 
         return True
@@ -353,6 +356,31 @@ class VarHandler(BaseVarHandler):
         axis_info = table_info["variable_entry"][self.name]["dimensions"].split(" ")
 
         for dim in TIME_DIMS:
+            if dim in axis_info:
+                return dim
+
+        return None
+
+    def _get_var_vertical_dim(self, table_path: str) -> str | None:
+        """Get the CMIP variable's vertical dimension, if it exists.
+
+        Parameters
+        ----------
+        table_path : str
+            The absolute path to the CMOR table.
+
+        Returns
+        -------
+        str | None
+            The optional name of the vertical dimension if it exists for the CMIP
+            variable defined in the CMOR table.
+        """
+        with open(table_path, "r") as inputstream:
+            table_info = json.load(inputstream)
+
+        axis_info = table_info["variable_entry"][self.name]["dimensions"].split(" ")
+
+        for dim in VERTICAL_DIMS:
             if dim in axis_info:
                 return dim
 
@@ -453,7 +481,7 @@ class VarHandler(BaseVarHandler):
         raise KeyError("No matching time bounds found in the dataset")
 
     def _get_cmor_axis_ids_and_ips_id(
-        self, ds: xr.Dataset, time_dim: str | None
+            self, ds: xr.Dataset, time_dim: str | None, vert_dim: str | None
     ) -> Tuple[Dict[str, int], int | None]:
         """Create the CMOR axes objects, which are set globally in the CMOR module.
 
@@ -506,8 +534,7 @@ class VarHandler(BaseVarHandler):
             coord_vals=ds["lon"].values,
             cell_bounds=ds["lon_bnds"].values,
         )
-
-        if self._has_hybrid_sigma_levels(ds):
+        if vert_dim is not None:
             self._set_cmor_zfactor_for_hybrid_levels(ds, axis_id_map)
 
             cmor_ips_id = self._set_and_get_cmor_zfactor_ips_id(axis_id_map)
@@ -547,8 +574,10 @@ class VarHandler(BaseVarHandler):
         return lev_id
 
     def _has_hybrid_sigma_levels(self, ds: xr.Dataset):
-        hybrid_sigma_levels = ["PS", "hyai", "hybi", "hybm", "hyam"]
-
+        # This is not the right test for cmip6 in cesm since these variables
+        # are also in the 2d variable input files.  Instead we should test for a
+        # vertical dimension in the variable.
+        hybrid_sigma_levels = ["P0", "hyai", "hybi", "hybm", "hyam"]
         return set(hybrid_sigma_levels).issubset(ds.data_vars)
 
     def _set_cmor_zfactor_for_hybrid_levels(

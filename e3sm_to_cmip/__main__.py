@@ -11,6 +11,7 @@ import sys
 import tempfile
 import threading
 import warnings
+import configparser
 from concurrent.futures import ProcessPoolExecutor as Pool
 from dataclasses import dataclass
 from pathlib import Path
@@ -108,7 +109,9 @@ class E3SMtoCMIP:
         self.simple_mode: bool = parsed_args.simple
         self.serial_mode: bool = parsed_args.serial
         self.info_mode: bool = parsed_args.info
-
+        self.config = configparser.ConfigParser()
+        self.config['atm'] = {}
+        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d{{6}}-\d{{6}}\.nc"  
         # ======================================================================
         # Run settings.
         # ======================================================================
@@ -187,7 +190,6 @@ class E3SMtoCMIP:
                 f"Error running handlers: { ' '.join([x['name'] for x in self.handlers]) }"
             )
             return 1
-
         if self.custom_metadata:
             add_metadata(
                 file_path=self.output_path,
@@ -784,13 +786,15 @@ class E3SMtoCMIP:
                 handler_method = handler["method"]
                 handler_variables = handler["raw_variables"]
                 table = handler["table"]
+                if handler["levels"] and self.realm == "atm":
+                    handler_variables.append("PS")
 
                 # find the input files this handler needs
                 if self.realm in ["atm", "lnd"]:
                     vars_to_filepaths = {
                         var: [
                             os.path.join(self.input_path, x)  # type: ignore
-                            for x in find_atm_files(var, self.input_path)
+                            for x in find_atm_files(var, self.input_path, self.config)
                         ]
                         for var in handler_variables
                     }
@@ -870,13 +874,15 @@ class E3SMtoCMIP:
             handler_method = handler["method"]
             handler_variables = handler["raw_variables"]
             table = handler["table"]
+            if handler["levels"] and self.realm == "atm":
+                handler_variables.append("PS")
 
             # find the input files this handler needs
             if self.realm in ["atm", "lnd"]:
                 vars_to_filepaths = {
                     var: [
                         os.path.join(self.input_path, x)  # type: ignore
-                        for x in find_atm_files(var, self.input_path)
+                        for x in find_atm_files(var, self.input_path, self.config)
                     ]
                     for var in handler_variables
                 }

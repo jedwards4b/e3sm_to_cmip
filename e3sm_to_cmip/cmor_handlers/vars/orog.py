@@ -64,7 +64,7 @@ def handle(infiles, tables, user_input_path, table, logdir):
     zerofiles = False
     for variable in RAW_VARIABLES:
         if len(infiles[variable]) == 0:
-            msg = f"{VAR_NAME}: Unable to find input files for {variable}"
+            msg = f"{VAR_NAME}: Unable to find input files for {variable} {__file__}"
             print_message(msg)
             logging.error(msg)
             zerofiles = True
