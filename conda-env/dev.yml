@@ -1,5 +1,5 @@
 # Conda e3sm_to_cmip development environment
-name: e3sm_to_cmip_dev
+name: e3sm_to_cmip_devjpe
 channels:
   - conda-forge
   - defaults
@@ -16,6 +16,11 @@ dependencies:
   - tqdm
   - xarray >=2022.02.0 # This version of Xarray drops support for Python 3.8.
   - xcdat >=0.6.0
+  # Jims additions
+  - python <=3.12
+  - uxarray
+  - geocat-comp
+  - xesmf
   # Testing
   # ==================
   - pytest

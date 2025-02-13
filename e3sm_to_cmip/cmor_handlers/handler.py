@@ -226,6 +226,7 @@ class VarHandler(BaseVarHandler):
         # how to handle downstream operations such writing files out with CMOR
         # with or without a time axis.
         table_abs_path = os.path.join(tables_path, self.table)
+
         time_dim: str | None = self._get_var_time_dim(table_abs_path)
 
         vert_dim: str | None = self._get_var_vertical_dim(table_abs_path)
@@ -246,7 +247,20 @@ class VarHandler(BaseVarHandler):
             # Create the base CMOR variable object using CMOR axis objects,
             # which are all set globally in the CMOR module with unique IDs (later
             # referenced when writing out to a file with cmor.write()).
-            logger.info(f"{self.name}: creating CMOR variable with CMOR axis objects.")
+            logger.info(f"{self.name}: creating CMOR variable with CMOR axis objects. ")
+            if vert_dim == "plev19":
+                import geocat.comp as gc
+
+                coordinate_table = os.path.join(tables_path, "CMIP6_coordinate.json")
+                with open(coordinate_table, 'r') as f:
+                    coord_data = json.load(f)
+                new_levels = np.array(coord_data["axis_entry"]["plev19"]["requested"], dtype='f')
+                ds["T"] = gc.interpolation.interp_hybrid_to_pressure(ds["T"], ds["PS"], ds["hyam"], ds["hybm"], p0=ds["P0"],
+                                                                     new_levels=new_levels,
+                                                                     lev_dim="lev")
+                ds = ds.drop_vars(["hyam", "hybm", "P0"])
+#                ds = ds.rename({'plev' : 'plev19'})
+
             cmor_axis_id_map, cmor_ips_id = self._get_cmor_axis_ids_and_ips_id(
                 ds=ds, time_dim=time_dim, vert_dim=vert_dim
             )
@@ -534,7 +548,7 @@ class VarHandler(BaseVarHandler):
             coord_vals=ds["lon"].values,
             cell_bounds=ds["lon_bnds"].values,
         )
-        if vert_dim is not None:
+        if not (vert_dim is None or vert_dim == 'plev19'):
             self._set_cmor_zfactor_for_hybrid_levels(ds, axis_id_map)
 
             cmor_ips_id = self._set_and_get_cmor_zfactor_ips_id(axis_id_map)
@@ -556,21 +570,20 @@ class VarHandler(BaseVarHandler):
         """
         axis_name = self.levels["e3sm_axis_name"]  # type: ignore
         axis_bnds = self.levels.get("e3sm_axis_bnds")  # type: ignore
-
         coord_vals = ds[axis_name].values
 
         if axis_bnds is not None:
             cell_bounds = ds[axis_bnds].values
         else:
             cell_bounds = None
-
+        # at this point the table_entry needs to be in the ds dataset.
+        
         lev_id = cmor.axis(
             table_entry=self.levels["name"],  # type: ignore
             units=self.levels["units"],  # type: ignore
             coord_vals=coord_vals,
             cell_bounds=cell_bounds,
         )
-
         return lev_id
 
     def _has_hybrid_sigma_levels(self, ds: xr.Dataset):
