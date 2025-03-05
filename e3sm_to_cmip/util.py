@@ -377,7 +377,7 @@ def _is_table_supported_by_realm(table: str, realm: str) -> bool:
     return in_tables
 
 
-def copy_user_metadata(input_path, output_path):
+def copy_user_metadata(input_path, output_path, syear=None):
     """
     write out the users input file for cmor into the output directory
     and replace the output line with the path to the output directory
@@ -402,6 +402,8 @@ def copy_user_metadata(input_path, output_path):
         for line in fin:
             if "outpath" in line:
                 fout.write(f'\t"outpath": "{output_path}",\n')
+            elif syear and "sub_experiment_id" in line:
+                fout.write(f'\t"sub_experiment_id": "{syear}",\n')
             else:
                 fout.write(line)
 
@@ -592,12 +594,14 @@ def get_years_from_raw(path, realm, var):
         path (str): the directory to look in for data
         realm (str): the type of data to look for, i.e atm, lnd, mpaso, mpassi
     """
+    print(f"path {path} realm {realm} var {var}")
     start = 0
     end = 0
     if realm in ["atm", "lnd"]:
         contents = sorted(
             [f for f in os.listdir(path) if f.endswith("nc") and var in f]
         )
+        print(f"contents = {contents}")
         p = var + r"\d{6}_\d{6}.nc"
         s = re.match(pattern=p, string=contents[0])
         start = int(contents[0][s.start() : s.start() + 4])  # type: ignore

@@ -17,7 +17,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from pprint import pprint
 from typing import List, Optional, Union
-
+import re
 import xarray as xr
 import yaml
 from tqdm import tqdm
@@ -45,6 +45,7 @@ from e3sm_to_cmip.util import (
     precheck,
     print_debug,
     print_message,
+    get_years_from_raw,
 )
 
 os.environ["CDAT_ANONYMOUS_LOG"] = "false"
@@ -167,6 +168,7 @@ class E3SMtoCMIP:
 
         # Setup directories using the CLI argument paths (e.g., output dir).
         # ======================================================================
+        
         if not self.info_mode:
             self._setup_dirs_with_paths()
 
@@ -190,6 +192,8 @@ class E3SMtoCMIP:
                 f"Error running handlers: { ' '.join([x['name'] for x in self.handlers]) }"
             )
             return 1
+#                syear,_ = get_years_from_raw(self.input_path, self.realm, )
+                
         if self.custom_metadata:
             add_metadata(
                 file_path=self.output_path,
@@ -637,7 +641,15 @@ class E3SMtoCMIP:
 
         # Copy the user's metadata json file with the updated output directory
         if not self.simple_mode:
-            copy_user_metadata(self.user_metadata, self.output_path)
+            # Get syear for DCPP runs
+            syear = None
+            with open(self.user_metadata) as f:
+                if '"activity_id": "DCPP"' in f.read():
+                    m = re.search("f09_g17.(\d\d\d\d)",self.input_path)
+                    syear = f"s{m[1]}"
+                    print(f"here is {syear}")
+
+            copy_user_metadata(self.user_metadata, self.output_path, syear=syear)
 
         # Setup temp storage directory
         temp_path = os.environ.get("TMPDIR")

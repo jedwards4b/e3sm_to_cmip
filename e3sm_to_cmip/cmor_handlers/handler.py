@@ -13,7 +13,7 @@ import yaml
 
 from e3sm_to_cmip._logger import _setup_logger
 from e3sm_to_cmip.cmor_handlers import FILL_VALUE, _formulas
-from e3sm_to_cmip.util import _get_table_for_non_monthly_freq
+from e3sm_to_cmip.util import _get_table_for_non_monthly_freq, get_year_from_cmip
 
 logger = _setup_logger(__name__)
 
@@ -271,7 +271,7 @@ class VarHandler(BaseVarHandler):
                 axis_ids=cmor_axis_ids,
                 positive=self.positive,
             )
-
+            
             if time_dim is None:
                 self._cmor_write(ds, cmor_var_id)
             else:
@@ -436,7 +436,7 @@ class VarHandler(BaseVarHandler):
         for filepaths in sorted_v_to_fp.values():
             filepath = filepaths[index]
             all_filepaths.append(filepath)
-
+            
         ds = xc.open_mfdataset(
             all_filepaths,
             add_bounds=["X", "Y"],
