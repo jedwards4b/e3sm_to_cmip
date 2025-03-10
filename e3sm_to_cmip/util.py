@@ -377,7 +377,7 @@ def _is_table_supported_by_realm(table: str, realm: str) -> bool:
     return in_tables
 
 
-def copy_user_metadata(input_path, output_path, syear=None):
+def copy_user_metadata(input_path, output_path, syear=None, member=None):
     """
     write out the users input file for cmor into the output directory
     and replace the output line with the path to the output directory
@@ -404,6 +404,10 @@ def copy_user_metadata(input_path, output_path, syear=None):
                 fout.write(f'\t"outpath": "{output_path}",\n')
             elif syear and "sub_experiment_id" in line:
                 fout.write(f'\t"sub_experiment_id": "{syear}",\n')
+            elif member and '"run_variant"' in line:
+                fout.write(f'\t"run_variant": "{syear}-r{member}i1p1f1",\n')
+#            elif member and '"parent_variant_label"' in line:
+#                fout.write(f'\t"parent_variant_label": "r{member}i1p1f1",\n')
             else:
                 fout.write(line)
 

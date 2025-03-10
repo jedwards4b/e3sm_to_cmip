@@ -645,11 +645,12 @@ class E3SMtoCMIP:
             syear = None
             with open(self.user_metadata) as f:
                 if '"activity_id": "DCPP"' in f.read():
-                    m = re.search("f09_g17.(\d\d\d\d)",self.input_path)
+                    m = re.search("f09_g17.(\d\d\d\d)-\d\d.(\d\d\d)",self.input_path)
                     syear = f"s{m[1]}"
-                    print(f"here is {syear}")
+                    member = int(m[2]) - 10
+                    
 
-            copy_user_metadata(self.user_metadata, self.output_path, syear=syear)
+            copy_user_metadata(self.user_metadata, self.output_path, syear=syear, member=member)
 
         # Setup temp storage directory
         temp_path = os.environ.get("TMPDIR")
