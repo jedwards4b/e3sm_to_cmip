@@ -444,6 +444,7 @@ class VarHandler(BaseVarHandler):
             combine="nested",
             data_vars="minimal",
             coords="minimal",
+            compat="override",
         )
 
         # If the output CMIP variable has an alternative time dimension name (e.g.,

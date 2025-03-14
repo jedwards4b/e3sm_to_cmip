@@ -919,7 +919,9 @@ class E3SMtoCMIP:
                 }
 
             will_run.append(handler.get("name"))
-
+            if handler.get("name") == "rlut":
+                table = "CMIP6_Amon.json"
+            print(f"table is {table} tables_path {self.tables_path}")
             # NOTE: We need a try and except statement here for TypeError because
             # the VarHandler.cmorize method does not use **kwargs, while the handle
             # method for MPAS still does.

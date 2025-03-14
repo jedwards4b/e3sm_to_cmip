@@ -702,6 +702,14 @@
   formula: FSNT - FLNT
   positive: down
   levels: null
+- name: tdps
+  units: K
+  raw_variables: [TREFHT, RHREFHT]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: TREFHT - ((100. - RHREFHT)/5.)
+  positive: null
+  levels: null
 - name: sfcWind
   units: m s-1
   raw_variables: [U10]

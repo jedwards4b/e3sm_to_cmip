@@ -385,6 +385,13 @@ def rtmt(ds: xr.Dataset) -> xr.DataArray:
 
     return result
 
+def tdps(ds: xr.Dataset) -> xr.DataArray:
+    """
+    tdps = TREFHT - ((100. - RHREFHT)/5.)
+    """
+    result = ds["TREFHT"] - ((100. - ds["RHREFHT"])/5.)
+
+    return result
 
 def tran(ds: xr.Dataset) -> xr.DataArray:
     """
