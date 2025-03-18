@@ -330,10 +330,10 @@
   levels: null
 - name: lai
   units: "1"
-  raw_variables: [LAISHA, LAISUN]
+  raw_variables: [TLAI]
   table: CMIP6_Lmon.json
   unit_conversion: null
-  formula: LAISHA + LAISUN
+  formula: null
   positive: null
   levels: null
 - name: mmrbc
@@ -435,6 +435,14 @@
 - name: nbp
   units: kg m-2 s-1
   raw_variables: [NBP]
+  table: CMIP6_Lmon.json
+  unit_conversion: g-to-kg
+  formula: null
+  positive: down
+  levels: null
+- name: npp
+  units: kg m-2 s-1
+  raw_variables: [NPP]
   table: CMIP6_Lmon.json
   unit_conversion: g-to-kg
   formula: null
@@ -718,6 +726,14 @@
   formula: null
   positive: null
   levels: null
+- name: snld
+  units: m
+  raw_variables: [SNOW_DEPTH]
+  table: CMIP6_Lmon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
 - name: snw
   units: kg m-2
   raw_variables: [H2OSNO]
@@ -783,7 +799,7 @@
 - name: tasmin
   units: K
   raw_variables: [TREFHTMN]
-  table: CMIP6_day.json
+  table: CMIP6_Amon.json
   unit_conversion: null
   formula: null
   positive: null
@@ -822,8 +838,8 @@
   levels: null
 - name: ts
   units: K
-  raw_variables: [TS]
-  table: CMIP6_Amon.json
+  raw_variables: [TSKIN]
+  table: CMIP6_Lmon.json
   unit_conversion: null
   formula: null
   positive: null

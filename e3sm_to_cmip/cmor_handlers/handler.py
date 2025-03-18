@@ -446,7 +446,7 @@ class VarHandler(BaseVarHandler):
             coords="minimal",
             compat="override",
         )
-
+        ds["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
         # If the output CMIP variable has an alternative time dimension name (e.g.,
         # "time2") add that to the xr.Dataset by copying the "time" dimension.
         if time_dim is not None and time_dim != "time":
