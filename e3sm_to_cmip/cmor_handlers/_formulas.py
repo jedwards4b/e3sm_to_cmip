@@ -287,6 +287,22 @@ def pr(ds: xr.Dataset) -> xr.DataArray:
 
     return result
 
+def prhmax(ds: xr.Dataset) -> xr.DataArray:
+    """
+    prhmax = (PRECTMX) * 1000.0
+
+    High frequency version:
+    prhmax = PRECTMX * 1000.0
+    """
+    if "PRECTMX" in ds:
+        result = ds["PRECTMX"] * 1000.0
+    else:
+        raise KeyError(
+            "No formula could be applied for 'prhmax'. "
+        )
+
+    return result
+
 
 def prsn(ds: xr.Dataset) -> xr.DataArray:
     """

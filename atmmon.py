@@ -12,7 +12,7 @@ import subprocess
 
 dataroot="/glade/campaign/cesm/development/espwg/CESM2-DP/DCPP_submission/"
 varlist = ["rsdt", "rsut", "rlut", "rsutcs", "rlutcs", "rsds", "tauu", "tauv", "hfss", "hfls", "evspsbl", "pr", "tas", "tasmax", "tasmin", "sfcWind", "huss", "tdps", "clt", "ps", "psl" ] 
-for path in glob.iglob(dataroot + "*/lnd/proc/tseries/month_1/"):
+for path in glob.iglob(dataroot + "*/atm/proc/tseries/month_1/"):
     if "195" in path:
         continue
     yr = path[85:89]
@@ -20,7 +20,7 @@ for path in glob.iglob(dataroot + "*/lnd/proc/tseries/month_1/"):
     dolist = []
     
     for var in varlist:
-        if glob.glob(dataroot+"CMIP6/DCPP/NCAR/CESM2/dcppA-hindcast/s"+yr+"*/Amon/"+var+"/gn/v2025*/"+var+"_Amon_CESM2_dcppA-hindcast_s"+yr+"-r"+str(member)+"*.nc"):
+        if glob.glob(dataroot+"CMIP6/DCPP/NCAR/CESM2/dcppA-hindcast/s"+yr+"*/Amon/"+var+"/gn/"+var+"_Amon_CESM2_dcppA-hindcast_s"+yr+"-r"+str(member)+"*.nc"):
 #            print(f"Removing {var} from list")
             continue
         else:

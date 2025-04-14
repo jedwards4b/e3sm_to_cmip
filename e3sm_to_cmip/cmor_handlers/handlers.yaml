@@ -502,22 +502,48 @@
       e3sm_axis_bnds: "ilev",
       time_name: "time2",
     }
+#- name: pr
+#  units: kg m-2 s-1
+#  raw_variables: [PRECT]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: PRECT * 1000.0
+#  positive: null
+#  levels: null
+#- name: pr
+#  units: kg m-2 s-1
+#  raw_variables: [PRECT]
+#  table: CMIP6_day.json
+#  unit_conversion: null
+#  formula: PRECT * 1000.0
+#  positive: null
+#  levels: null
 - name: pr
   units: kg m-2 s-1
   raw_variables: [PRECT]
-  table: CMIP6_day.json
+  table: CMIP6_6hrLev.json
   unit_conversion: null
   formula: PRECT * 1000.0
   positive: null
   levels: null
-- name: pr
+- name: prhmax
   units: kg m-2 s-1
-  raw_variables: [PRECC, PRECL]
-  table: CMIP6_Amon.json
+  raw_variables: [PRECTMX]
+  table: CMIP6_day.json
   unit_conversion: null
-  formula: (PRECC + PRECL) * 1000.0
+  formula: PRECTMX * 1000.0
   positive: null
   levels: null
+
+
+#- name: pr
+#  units: kg m-2 s-1
+#  raw_variables: [PRECC, PRECL]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: (PRECC + PRECL) * 1000.0
+#  positive: null
+#  levels: null
 - name: prc
   units: kg m-2 s-1
   raw_variables: [PRECC]
@@ -558,10 +584,18 @@
   formula: null
   positive: null
   levels: null
+#- name: psl
+#  units: Pa
+#  raw_variables: [PSL]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: null
+#  positive: null
+#  levels: null
 - name: psl
   units: Pa
   raw_variables: [PSL]
-  table: CMIP6_Amon.json
+  table: CMIP6_6hrLev.json
   unit_conversion: null
   formula: null
   positive: null
@@ -783,19 +817,19 @@
 - name: tasmax
   units: K
   raw_variables: [TREFHTMX]
-  table: CMIP6_day.json
-  unit_conversion: null
-  formula: null
-  positive: null
-  levels: null
-- name: tasmax
-  units: K
-  raw_variables: [TREFMXAV]
   table: CMIP6_Amon.json
   unit_conversion: null
   formula: null
   positive: null
   levels: null
+#- name: tasmax
+#  units: K
+#  raw_variables: [TREFMXAV]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: null
+#  positive: null
+#  levels: null
 - name: tasmin
   units: K
   raw_variables: [TREFHTMN]
@@ -866,6 +900,14 @@
   formula: null
   positive: null
   levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
+- name: uas
+  units: m s-1
+  raw_variables: [UBOT]
+  table: CMIP6_6hrLev.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
 - name: va
   units: m s-1
   raw_variables: [V]
@@ -874,6 +916,14 @@
   formula: null
   positive: null
   levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
+- name: vas
+  units: m s-1
+  raw_variables: [VBOT]
+  table: CMIP6_6hrLev.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
 - name: wap
   units: Pa s-1
   raw_variables: [OMEGA]

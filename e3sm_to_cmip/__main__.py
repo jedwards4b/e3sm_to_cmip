@@ -112,7 +112,7 @@ class E3SMtoCMIP:
         self.info_mode: bool = parsed_args.info
         self.config = configparser.ConfigParser()
         self.config['atm'] = {}
-        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d{{6}}-\d{{6}}\.nc"  
+        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.nc"  
         # ======================================================================
         # Run settings.
         # ======================================================================
