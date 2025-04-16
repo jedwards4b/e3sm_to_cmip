@@ -75,26 +75,28 @@ def check_files(directory, varlist, masterdataroot, realm, period, expected_coun
 masterdataroot="/glade/campaign/cesm/development/espwg/CESM2-DP/DCPP_submission/"
 
 varlists = {}
-periods = ("day_1", "hour_6", "month_1")
-realms = ("atm", "lnd")
+#periods = ["day_1", "hour_6", "month_1"]
+periods = ["month_1", ]
+realms = ["lnd"]
 
 for period in periods:
     varlists[period] = {}
     for realm in realms:
         if realm == "atm":
             if period == "hour_6":
-                varlists[period][realm] = ["uas", "vas", "psl", "pr"]
-#            elif period == "day_1":
-#                varlists[period][realm] = ["pr","prhmax", "rsds", "tas", "tasmax", "tasmin", "sfcWind", "tdps", "clt", "psl"]
+                varlists[period][realm] = ["pr", "uas", "vas", "psl", ]
+            elif period == "day_1":
+                varlists[period][realm] = ["clt", "pr","prhmax", "rsds", "tas", "tasmax", "tasmin", "sfcWind", "tdps", "psl"]
 #            elif period == "month_1":
 #                varlists[period][realm] = ["rsdt", "rsut", "rlut", "rsutcs", "rlutcs", "rsds", "tauu", "tauv", "hfss", "hfls", "evspsbl", "pr", "tas", "tasmax", "tasmin", "sfcWind", "huss", "tdps", "clt", "ps", "psl" ] 
-#        elif realm == "lnd":
-#            if period == "month_1":
-#                varlists[period][realm] = ["ts", "snld", "mrro", "cVeg", "cLitter", "gpp", "npp", "lai", "nbp", "rh", "ra"]
+        elif realm == "lnd":
+            if period == "month_1":
+                varlists[period][realm] = ["ts", "snld", "mrro", "cVeg", "cLitter", "gpp", "npp", "lai", "nbp", "rh", "ra"]
 tasks = []
 for period in periods:
     for realm in realms:
         if period in varlists.keys() and realm in (varlists[period]).keys():
+            print(f"period {period} realm {realm}")
             if period == "hour_6":
                 pdir = "6hrLev"
             elif period == "day_1":
@@ -105,7 +107,7 @@ for period in periods:
                 else:
                     pdir = "Lmon"
             var = varlists[period][realm][0]
-            for yr in range(2022, 2024):
+            for yr in range(2023, 2024):
                 tasks.append([os.path.join(masterdataroot,"CMIP6","DCPP","NCAR","CESM2","dcppA-hindcast","s"+str(yr)+'-r1i1p1f1',pdir,var,"gn"),
                               varlists[period][realm], masterdataroot, realm, period])
 

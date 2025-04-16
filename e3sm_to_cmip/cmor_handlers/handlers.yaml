@@ -164,7 +164,7 @@
 - name: clt
   units: "%"
   raw_variables: [CLDTOT]
-  table: CMIP6_Amon.json
+  table: CMIP6_day.json
   unit_conversion: 1-to-%
   formula: null
   positive: null
@@ -502,14 +502,14 @@
       e3sm_axis_bnds: "ilev",
       time_name: "time2",
     }
-#- name: pr
-#  units: kg m-2 s-1
-#  raw_variables: [PRECT]
-#  table: CMIP6_Amon.json
-#  unit_conversion: null
-#  formula: PRECT * 1000.0
-#  positive: null
-#  levels: null
+- name: pr
+  units: kg m-2 s-1
+  raw_variables: [PRECT]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: PRECT * 1000.0
+  positive: null
+  levels: null
 #- name: pr
 #  units: kg m-2 s-1
 #  raw_variables: [PRECT]
@@ -518,14 +518,14 @@
 #  formula: PRECT * 1000.0
 #  positive: null
 #  levels: null
-- name: pr
-  units: kg m-2 s-1
-  raw_variables: [PRECT]
-  table: CMIP6_6hrLev.json
-  unit_conversion: null
-  formula: PRECT * 1000.0
-  positive: null
-  levels: null
+#- name: pr
+#  units: kg m-2 s-1
+#  raw_variables: [PRECT]
+#  table: CMIP6_6hrLev.json
+#  unit_conversion: null
+#  formula: PRECT * 1000.0
+#  positive: null
+#  levels: null
 - name: prhmax
   units: kg m-2 s-1
   raw_variables: [PRECTMX]
@@ -595,7 +595,7 @@
 - name: psl
   units: Pa
   raw_variables: [PSL]
-  table: CMIP6_6hrLev.json
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
@@ -747,15 +747,15 @@
 - name: tdps
   units: K
   raw_variables: [TREFHT, RHREFHT]
-  table: CMIP6_Amon.json
+  table: CMIP6_day.json
   unit_conversion: null
   formula: TREFHT - ((100. - RHREFHT)/5.)
   positive: null
   levels: null
 - name: sfcWind
   units: m s-1
-  raw_variables: [U10]
-  table: CMIP6_Amon.json
+  raw_variables: [U010]
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
@@ -801,7 +801,7 @@
 - name: tas
   units: K
   raw_variables: [TREFHT]
-  table: CMIP6_Amon.json
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
@@ -817,7 +817,7 @@
 - name: tasmax
   units: K
   raw_variables: [TREFHTMX]
-  table: CMIP6_Amon.json
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
@@ -833,19 +833,19 @@
 - name: tasmin
   units: K
   raw_variables: [TREFHTMN]
-  table: CMIP6_Amon.json
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
   levels: null
-- name: tasmin
-  units: K
-  raw_variables: [TREFMNAV]
-  table: CMIP6_Amon.json
-  unit_conversion: null
-  formula: null
-  positive: null
-  levels: null
+#- name: tasmin
+#  units: K
+#  raw_variables: [TREFMNAV]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: null
+#  positive: null
+#  levels: null
 - name: tauu
   units: Pa
   raw_variables: [TAUX]
