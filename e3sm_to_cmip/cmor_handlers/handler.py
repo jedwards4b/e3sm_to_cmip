@@ -304,6 +304,7 @@ class VarHandler(BaseVarHandler):
         bool
             True if all variables have filepaths, else False.
         """
+        print(f"vars_to_filespaths = {vars_to_filespaths}")
         for var, filepaths in vars_to_filespaths.items():
             if len(filepaths) == 0:
                 logging.error(f"{var}: Unable to find input files for {var} in {vars_to_filepaths}")

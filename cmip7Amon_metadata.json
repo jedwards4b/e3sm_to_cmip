@@ -5,9 +5,9 @@
 
   "#note_experiment_id": "valid experiment ids are found in CMIP7_CV.json",
 
-  "experiment_id": "dcppA-hindcast",
+  "experiment_id": "amip",
 
-  "activity_id": "DCPP",
+  "activity_id": "CMIP",
 
   "realization_index": "1",
 
@@ -21,13 +21,13 @@
 
   "run_variant": "",
 
-  "parent_experiment_id": "no parent",
+  "#parent_experiment_id": "no parent",
 
-  "parent_activity_id": "DCPP",
+  "#parent_activity_id": "DCPP",
 
   "parent_source_id": "CESM2",
 
-  "parent_variant_label": "r1i1p1f1",
+  "#parent_variant_label": "r1i1p1f1",
 
   "parent_time_units": "days since 0001-01-01",
 

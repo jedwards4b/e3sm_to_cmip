@@ -112,7 +112,9 @@ class E3SMtoCMIP:
         self.info_mode: bool = parsed_args.info
         self.config = configparser.ConfigParser()
         self.config['atm'] = {}
-        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.nc"  
+        # cmip6 dcpp pattern
+        #        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.nc"
+        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.\d+-\d+\.nc"
         # ======================================================================
         # Run settings.
         # ======================================================================
@@ -643,14 +645,13 @@ class E3SMtoCMIP:
         if not self.simple_mode:
             # Get syear for DCPP runs
             syear = None
+            member = None
             with open(self.user_metadata) as f:
                 if '"activity_id": "DCPP"' in f.read():
                     m = re.search("f09_g17.(\d\d\d\d)-\d\d.(\d\d\d)",self.input_path)
                     syear = f"s{m[1]}"
                     member = int(m[2]) - 10
-                    
-
-            copy_user_metadata(self.user_metadata, self.output_path, syear=syear, member=member)
+                copy_user_metadata(self.user_metadata, self.output_path, syear=syear, member=member)
 
         # Setup temp storage directory
         temp_path = os.environ.get("TMPDIR")
