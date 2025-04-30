@@ -12,7 +12,7 @@ import xcdat as xc
 import yaml
 
 from e3sm_to_cmip._logger import _setup_logger
-from e3sm_to_cmip.cmor_handlers import FILL_VALUE, _formulas
+from e3sm_to_cmip.cmor_handlers import FILL_VALUE, _formulas, regrid_se_to_fv
 from e3sm_to_cmip.util import _get_table_for_non_monthly_freq, get_year_from_cmip
 
 logger = _setup_logger(__name__)
@@ -230,7 +230,6 @@ class VarHandler(BaseVarHandler):
         time_dim: str | None = self._get_var_time_dim(table_abs_path)
 
         vert_dim: str | None = self._get_var_vertical_dim(table_abs_path)
-
         
         # Assuming all year ranges are the same for every variable.
         # TODO: Is this a good keep this legacy assumption?
@@ -240,10 +239,10 @@ class VarHandler(BaseVarHandler):
         # ----------------------------------------------------------------------
         for index in range(num_files_per_variable):
             logger.info(
-                f"{self.name}: loading E3SM variables {vars_to_filepaths.keys()}"
+                f"{self.name}: loading model variables {vars_to_filepaths.keys()}"
             )
             ds = self._get_mfdataset(vars_to_filepaths, index, time_dim)
-
+            
             # Create the base CMOR variable object using CMOR axis objects,
             # which are all set globally in the CMOR module with unique IDs (later
             # referenced when writing out to a file with cmor.write()).
@@ -447,26 +446,48 @@ class VarHandler(BaseVarHandler):
             coords="minimal",
             compat="override",
         )
-        ds["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
-        # If the output CMIP variable has an alternative time dimension name (e.g.,
-        # "time2") add that to the xr.Dataset by copying the "time" dimension.
-        if time_dim is not None and time_dim != "time":
-            with xr.set_options(keep_attrs=True):
-                ds = ds.rename({"time": time_dim})
+        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
+        
+        regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
+        for var in vars_to_filepaths:
+            ds_out = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
+            if not isinstance(ds_out, xr.Dataset):
+                ds_out = ds_out.to_dataset(name=var)
+#                        ds = ds.drop_vars([var])
+#            print(f"ds_out is {ds_out}")
+#            print(f"ds is {ds}")
+#            ds.assign(variables=ds_out[var], variables_kwargs=None)
+        ds_out = ds_out.assign_attrs(ds.attrs)    
 
+        if "lat_bnds" in ds:
+            ds_out["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
+        if "time_bnds" in ds:
+            ds_out["time_bnds"] = ds["time_bnds"]
+        if "time_bounds" in ds:
+            ds_out["time_bounds"] = ds["time_bounds"]
+        logger.info("f time_dim is {time_dim}")
+            # If the output CMIP variable has an alternative time dimension name (e.g.,
+        # "time2") add that to the xr.Dataset by copying the "time" dimension.
+        if time_dim is not None:
+            if time_dim != "time":
+                with xr.set_options(keep_attrs=True):
+                    ds_out = ds.rename({"time": time_dim})
+            else:
+                ds_out["time"] = ds["time"]
+                
         # Convert "lev" and "ilev" units from mb to Pa for downstream operations.
         if "lev" in ds:
-            ds["lev"] = ds["lev"] / 1000
+            ds_out["lev"] = ds["lev"] / 1000
         if "ilev" in ds:
-            ds["ilev"] = ds["ilev"] / 1000
+            ds_out["ilev"] = ds["ilev"] / 1000
 
         # If the variable has levels for "sdepth", make sure it has bounds
         # for the "levgrnd" axis using a statically defined list of bound
         # values.
         if self.levels is not None and self.levels["name"] == "sdepth":
-            ds["levgrnd_bnds"] = _formulas.LEVGRND_BNDS
+            ds_out["levgrnd_bnds"] = _formulas.LEVGRND_BNDS
 
-        return ds
+        return ds_out
 
     def _get_time_bnds_key(self, data_vars: KeysView[Any]) -> str:
         """Get the key for the time bounds.

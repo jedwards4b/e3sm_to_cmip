@@ -1,11 +1,11 @@
 {
   "#note_source_type": "explanation of what source_type is goes here",
 
-  "source_type": "AOGCM AER",
+  "source_type": "AOGCM BGC ",
 
   "#note_experiment_id": "valid experiment ids are found in CMIP7_CV.json",
 
-  "experiment_id": "amip",
+  "experiment_id": "esm-piControl-spinup",
 
   "activity_id": "CMIP",
 
@@ -47,9 +47,9 @@
 
   "calendar": "noleap",
 
-  "grid": "data on a finite volume 1x1 degree native grid.",
+  "grid": "data on a finite volume 1x1 degree grid interpolated from the native spectral element grid.",
 
-  "grid_label": "gn",
+  "grid_label": "gr",
 
   "nominal_resolution": "100 km",
 

@@ -282,7 +282,6 @@ class E3SMtoCMIP:
         for path in paths:
             ds = xr.open_dataset(path)
             data_vars = list(ds.data_vars.keys())
-
             e3sm_vars = e3sm_vars + data_vars
 
         if len(e3sm_vars) == 0:
