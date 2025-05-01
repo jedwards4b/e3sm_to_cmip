@@ -447,12 +447,15 @@ class VarHandler(BaseVarHandler):
             compat="override",
         )
         weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
-        
+        ds_out = xr.Dataset()
         regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
         for var in vars_to_filepaths:
-            ds_out = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
+            ds_tmp = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
             if not isinstance(ds_out, xr.Dataset):
-                ds_out = ds_out.to_dataset(name=var)
+                ds_tmp = ds_tmp.to_dataset(name=var)
+            for v in ds_tmp.data_vars:
+                ds_out[v] = ds_tmp[v]
+#                ds_out = xr.merge([ds_out, ds_tmp])
 #                        ds = ds.drop_vars([var])
 #            print(f"ds_out is {ds_out}")
 #            print(f"ds is {ds}")

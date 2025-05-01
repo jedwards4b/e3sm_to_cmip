@@ -728,14 +728,14 @@
   formula: SOLIN - FSNTOAC
   positive: up
   levels: null
-- name: rsutcs
-  units: W m-2
-  raw_variables: [FSUTOAC]
-  table: CMIP6_Amon.json
-  unit_conversion: null
-  formula: null
-  positive: up
-  levels: null
+#- name: rsutcs
+#  units: W m-2
+#  raw_variables: [FSUTOAC]
+#  table: CMIP6_Amon.json
+#  unit_conversion: null
+#  formula: null
+#  positive: up
+#  levels: null
 - name: rtmt
   units: W m-2
   raw_variables: [FSNT, FLNT]

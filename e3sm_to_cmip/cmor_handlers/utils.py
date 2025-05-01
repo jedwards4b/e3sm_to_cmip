@@ -180,9 +180,10 @@ def derive_handlers(
     # be derived using the input E3SM variables.
     missing_handlers: List[str] = []
     cannot_derive: List[str] = []
-
+    logger.info(f"handlers_by_var {handlers_by_var}")
     for var in cmip_vars:
         # Try to get all matching handlers for a variable.
+        logger.debug(f"try to find matching handler for {var}")
         var_handlers = handlers_by_var.get(var)
         if var_handlers is None:
             missing_handlers.append(var)
@@ -190,6 +191,7 @@ def derive_handlers(
 
         # Try to derive the variable handler using the E3SM variables from
         # the input dataset(s).
+        logger.debug(f"try to find derived_handler for {var}")
         derived_handler = _derive_handler(var, e3sm_vars, var_handlers)
         if derived_handler is None:
             cannot_derive.append(var)

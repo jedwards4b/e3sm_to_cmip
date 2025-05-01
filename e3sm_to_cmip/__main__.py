@@ -709,7 +709,7 @@ class E3SMtoCMIP:
                         if raw_var not in ds.data_vars:
                             has_vars = False
 
-                            msg = f"Variable {handler['name']} is not present in the input dataset"
+                            msg = f"Variable {handler['name']} is not present in the input dataset {ds.data_vars}"
                             print_message(msg, status="error")
 
                             break
