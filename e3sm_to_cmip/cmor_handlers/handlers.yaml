@@ -87,6 +87,14 @@
   formula: null
   positive: null
   levels: null
+- name: ch4
+  units: "%"
+  raw_variables: [CH4]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
 - name: cl
   units: "%"
   raw_variables: [CLOUD]
@@ -207,6 +215,14 @@
   formula: null
   positive: null
   levels: null
+- name: co2
+  units: "%"
+  raw_variables: [CO2]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
 - name: emibc
   units: kg m-2 s-1
   raw_variables: [SFbc_a4, bc_a4_CLXF]
@@ -432,6 +448,14 @@
   formula: null
   positive: null
   levels: null
+- name: n2o
+  units: "%"
+  raw_variables: [N2O]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
 - name: nbp
   units: kg m-2 s-1
   raw_variables: [NBP]
@@ -459,6 +483,14 @@
 - name: od550aer
   units: "1"
   raw_variables: [AODVIS]
+  table: CMIP6_AERmon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
+- name: od550dust
+  units: "1"
+  raw_variables: [AODDUST]
   table: CMIP6_AERmon.json
   unit_conversion: null
   formula: null
@@ -502,14 +534,14 @@
       e3sm_axis_bnds: "ilev",
       time_name: "time2",
     }
-#- name: pr
-#  units: kg m-2 s-1
-#  raw_variables: [PRECT]
-#  table: CMIP6_Amon.json
-#  unit_conversion: null
-#  formula: PRECT * 1000.0
-#  positive: null
-#  levels: null
+- name: pr
+  units: kg m-2 s-1
+  raw_variables: [PRECT]
+  table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: PRECT * 1000.0
+  positive: null
+  levels: null
 #- name: pr
 #  units: kg m-2 s-1
 #  raw_variables: [PRECT]
@@ -518,14 +550,14 @@
 #  formula: PRECT * 1000.0
 #  positive: null
 #  levels: null
-- name: pr
-  units: kg m-2 s-1
-  raw_variables: [PRECT]
-  table: CMIP6_6hrLev.json
-  unit_conversion: null
-  formula: PRECT * 1000.0
-  positive: null
-  levels: null
+#- name: pr
+#  units: kg m-2 s-1
+#  raw_variables: [PRECT]
+#  table: CMIP6_6hrLev.json
+#  unit_conversion: null
+#  formula: PRECT * 1000.0
+#  positive: null
+#  levels: null
 - name: prhmax
   units: kg m-2 s-1
   raw_variables: [PRECTMX]
@@ -584,22 +616,22 @@
   formula: null
   positive: null
   levels: null
-#- name: psl
-#  units: Pa
-#  raw_variables: [PSL]
-#  table: CMIP6_Amon.json
-#  unit_conversion: null
-#  formula: null
-#  positive: null
-#  levels: null
 - name: psl
   units: Pa
   raw_variables: [PSL]
-  table: CMIP6_6hrLev.json
+  table: CMIP6_Amon.json
   unit_conversion: null
   formula: null
   positive: null
   levels: null
+#- name: psl
+#  units: Pa
+#  raw_variables: [PSL]
+#  table: CMIP6_6hrLev.json
+#  unit_conversion: null
+#  formula: null
+#  positive: null
+#  levels: null
 - name: ra
   units: kg m-2 s-1
   raw_variables: [AR]
@@ -903,7 +935,7 @@
 - name: uas
   units: m s-1
   raw_variables: [UBOT]
-  table: CMIP6_6hrLev.json
+  table: CMIP6_Amon.json
   unit_conversion: null
   formula: null
   positive: null
@@ -919,7 +951,7 @@
 - name: vas
   units: m s-1
   raw_variables: [VBOT]
-  table: CMIP6_6hrLev.json
+  table: CMIP6_Amon.json
   unit_conversion: null
   formula: null
   positive: null

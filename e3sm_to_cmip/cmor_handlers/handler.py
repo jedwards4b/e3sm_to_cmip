@@ -254,10 +254,19 @@ class VarHandler(BaseVarHandler):
                 with open(coordinate_table, 'r') as f:
                     coord_data = json.load(f)
                 new_levels = np.array(coord_data["axis_entry"]["plev19"]["requested"], dtype='f')
-                ds["T"] = gc.interpolation.interp_hybrid_to_pressure(ds["T"], ds["PS"], ds["hyam"], ds["hybm"], p0=ds["P0"],
+                if "P0" in ds:
+                    p0 = ds["P0"]
+                else:
+                    p0 = 10000
+                for var in ["T", "RELHUM", "Z3", "Q", "O3", "U", "V", "OMEGA", "CH4", "CO2", "N2O"]:
+                    if var in ds:
+                        ds[var] = gc.interpolation.interp_hybrid_to_pressure(ds[var], ds["PS"], ds["hyam"], ds["hybm"], p0=p0,
                                                                      new_levels=new_levels,
                                                                      lev_dim="lev")
-                ds = ds.drop_vars(["hyam", "hybm", "P0"])
+                        ds = ds.drop_vars(["hyam", "hybm"])
+                        if "P0" in ds:
+                            ds = ds.drop_vars(["P0",])
+                    
 #                ds = ds.rename({'plev' : 'plev19'})
 
             cmor_axis_id_map, cmor_ips_id = self._get_cmor_axis_ids_and_ips_id(
@@ -442,11 +451,13 @@ class VarHandler(BaseVarHandler):
             add_bounds=["X", "Y"],
             decode_times=False,
             combine="nested",
-            data_vars="minimal",
+            data_vars=[ "hyai", "hybi", ],
             coords="minimal",
             compat="override",
         )
-        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
+        print(f"ds at this point {ds}")
+#        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
+        weights = "/glade/campaign/cesm/cesmdata/inputdata/cpl/gridmaps/ne30pg3/map_ne30pg3_to_1x1d_aave.nc"
         ds_out = xr.Dataset()
         regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
         for var in vars_to_filepaths:
@@ -461,13 +472,21 @@ class VarHandler(BaseVarHandler):
 #            print(f"ds is {ds}")
 #            ds.assign(variables=ds_out[var], variables_kwargs=None)
         ds_out = ds_out.assign_attrs(ds.attrs)    
-
-        if "lat_bnds" in ds:
-            ds_out["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
-        if "time_bnds" in ds:
-            ds_out["time_bnds"] = ds["time_bnds"]
-        if "time_bounds" in ds:
-            ds_out["time_bounds"] = ds["time_bounds"]
+        for var in ("lat_bnds","time_bnds", "time_bounds","hyam","hyai","hybm","hybi","P0"):
+            if var in ds:
+                ds_out[var] = ds[var].round(decimals=6)
+#        if "lat_bnds" in ds:
+#            ds_out["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
+#        if "time_bnds" in ds:
+#            ds_out["time_bnds"] = ds["time_bnds"]
+#        if "time_bounds" in ds:
+#            ds_out["time_bounds"] = ds["time_bounds"]
+#        if "hyam" in ds:
+#            ds_out["hyam"] = ds["hyam"]
+#        if "hybm" in ds:
+#            ds_out["hybm"] = ds["hybm"]
+#        if "P0" in ds:
+#            ds_out["P0"] = ds["P0"]
         logger.info("f time_dim is {time_dim}")
             # If the output CMIP variable has an alternative time dimension name (e.g.,
         # "time2") add that to the xr.Dataset by copying the "time" dimension.
@@ -562,17 +581,27 @@ class VarHandler(BaseVarHandler):
             axis_id_map["lev"] = self._get_cmor_lev_axis_id(ds)
 
         # Datasets will always have a "lat" and "lon" dimension.
+        if "lat_bnds" in ds:
+            cell_bounds = ds["lat_bnds"].values
+        else:
+            cell_bounds = None
+        
         axis_id_map["lat"] = cmor.axis(
             "latitude",
             units=ds["lat"].units,
             coord_vals=ds["lat"].values,
-            cell_bounds=ds["lat_bnds"].values,
+            cell_bounds=cell_bounds,
         )
+        if "lon_bnds" in ds:
+            cell_bounds = ds["lon_bnds"].values
+        else:
+            cell_bounds = None
+        
         axis_id_map["lon"] = cmor.axis(
             "longitude",
             units=ds["lon"].units,
             coord_vals=ds["lon"].values,
-            cell_bounds=ds["lon_bnds"].values,
+            cell_bounds=cell_bounds,
         )
         if not (vert_dim is None or vert_dim == 'plev19'):
             self._set_cmor_zfactor_for_hybrid_levels(ds, axis_id_map)

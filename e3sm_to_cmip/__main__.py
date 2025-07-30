@@ -890,7 +890,7 @@ class E3SMtoCMIP:
             if handler["levels"] and self.realm == "atm":
                 handler_variables.append("PS")
 
-                print(f"levels are {handler["levels"]}")
+                print(f'levels are {handler["levels"]}')
                 if handler["levels"]["name"] == "plev19":
                     print("This variable needs a vertical interpolation ")
 
