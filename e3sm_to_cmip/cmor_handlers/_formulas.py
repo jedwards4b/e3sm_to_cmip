@@ -159,7 +159,7 @@ def mrfso(ds: xr.Dataset) -> xr.DataArray:
     mrfso = verticalSum(SOILICE, capped_at=5000)
     """
     var = ds["SOILICE"]
-    axis = var.dims.index("levgrnd")
+    axis = var.dims.index("levsoi")
 
     # NOTE: `np.sum` is used instead of `xarray.DataArray.sum()` because
     # it maintains `np.nan` values, while xarray replaces `np.nan` with 0's.
@@ -168,7 +168,7 @@ def mrfso(ds: xr.Dataset) -> xr.DataArray:
 
     # Reconstruct the xarray.DataArray. Make sure not include "levgrnd" since
     # it has been summed over.
-    dims = [dim for dim in var.dims if dim != "levgrnd"]
+    dims = [dim for dim in var.dims if dim != "levsoi"]
     coords = {dim: var[dim] for dim in dims}
     da = xr.DataArray(dims=dims, coords=coords, data=result, attrs=var.attrs)
 
@@ -182,9 +182,9 @@ def mrso(ds: xr.Dataset) -> xr.DataArray:
     soil_ice = ds["SOILICE"]
     soil_liq = ds["SOILLIQ"]
 
-    # 1. Get the total summed over "levgrnd" dimension.
-    sum_soil_ice = soil_ice.sum(dim="levgrnd")
-    sum_soil_liq = soil_liq.sum(dim="levgrnd")
+    # 1. Get the total summed over "levsoi" dimension.
+    sum_soil_ice = soil_ice.sum(dim="levsoi")
+    sum_soil_liq = soil_liq.sum(dim="levsoi")
     result = sum_soil_ice + sum_soil_liq
 
     # 2. Replace all 0 values with nan

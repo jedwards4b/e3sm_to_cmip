@@ -114,7 +114,8 @@ class E3SMtoCMIP:
         self.config['atm'] = {}
         # cmip6 dcpp pattern
         #        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.nc"
-        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.\d+-\d+\.nc"
+#        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+-\d+\.\d+-\d+\.nc"
+        self.config['atm']['filenamepattern'] = r".*\.{var}\.\d+\-\d+\.nc"
         # ======================================================================
         # Run settings.
         # ======================================================================

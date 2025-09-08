@@ -315,7 +315,7 @@ class VarHandler(BaseVarHandler):
         print(f"vars_to_filespaths = {vars_to_filespaths}")
         for var, filepaths in vars_to_filespaths.items():
             if len(filepaths) == 0:
-                logging.error(f"{var}: Unable to find input files for {var} in {vars_to_filepaths}")
+                logging.error(f"{var}: Unable to find input files for {var} in {vars_to_filespaths}")
                 return False
 
         return True
@@ -455,10 +455,14 @@ class VarHandler(BaseVarHandler):
             coords="minimal",
             compat="override",
         )
-        print(f"ds at this point {ds}")
 #        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
         weights = "/glade/campaign/cesm/cesmdata/inputdata/cpl/gridmaps/ne30pg3/map_ne30pg3_to_1x1d_aave.nc"
         ds_out = xr.Dataset()
+        # for land variables ncol is lndgrid
+        if "lndgrid" in ds.dims:
+            ds = ds.rename_dims({"lndgrid" : "ncol"})
+        print(f"ds at this point {ds}")
+
         regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
         for var in vars_to_filepaths:
             ds_tmp = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
@@ -466,27 +470,13 @@ class VarHandler(BaseVarHandler):
                 ds_tmp = ds_tmp.to_dataset(name=var)
             for v in ds_tmp.data_vars:
                 ds_out[v] = ds_tmp[v]
-#                ds_out = xr.merge([ds_out, ds_tmp])
-#                        ds = ds.drop_vars([var])
-#            print(f"ds_out is {ds_out}")
-#            print(f"ds is {ds}")
-#            ds.assign(variables=ds_out[var], variables_kwargs=None)
+                
+
         ds_out = ds_out.assign_attrs(ds.attrs)    
         for var in ("lat_bnds","time_bnds", "time_bounds","hyam","hyai","hybm","hybi","P0"):
             if var in ds:
                 ds_out[var] = ds[var].round(decimals=6)
-#        if "lat_bnds" in ds:
-#            ds_out["lat_bnds"] = ds["lat_bnds"].round(decimals=6)
-#        if "time_bnds" in ds:
-#            ds_out["time_bnds"] = ds["time_bnds"]
-#        if "time_bounds" in ds:
-#            ds_out["time_bounds"] = ds["time_bounds"]
-#        if "hyam" in ds:
-#            ds_out["hyam"] = ds["hyam"]
-#        if "hybm" in ds:
-#            ds_out["hybm"] = ds["hybm"]
-#        if "P0" in ds:
-#            ds_out["P0"] = ds["P0"]
+
         logger.info("f time_dim is {time_dim}")
             # If the output CMIP variable has an alternative time dimension name (e.g.,
         # "time2") add that to the xr.Dataset by copying the "time" dimension.
