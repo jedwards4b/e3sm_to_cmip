@@ -188,7 +188,7 @@ class VarHandler(BaseVarHandler):
         Parameters
         ----------
         vars_to_filepaths : Dict[str, List[str]]
-            A dictionary mapping E3SM raw variables to a list of filepath(s).
+            A dictionary mapping raw variables to a list of filepath(s).
         tables_path : str
             The path to directory containing CMOR Tables directory.
         metadata_path : str
@@ -210,7 +210,7 @@ class VarHandler(BaseVarHandler):
         if table is not None:
             self.table = table
 
-        # If at least one E3SM raw variable has no file(s) found, return None to
+        # If at least one raw variable has no file(s) found, return None to
         # represent a failed operation.
         if not self._all_vars_have_filepaths(vars_to_filepaths):
             return None
@@ -268,13 +268,13 @@ class VarHandler(BaseVarHandler):
                             ds = ds.drop_vars(["P0",])
                     
 #                ds = ds.rename({'plev' : 'plev19'})
-
+            
             cmor_axis_id_map, cmor_ips_id = self._get_cmor_axis_ids_and_ips_id(
                 ds=ds, time_dim=time_dim, vert_dim=vert_dim
             )
             cmor_axis_ids = list(cmor_axis_id_map.values())
             cmor_var_id = cmor.variable(
-                self.name,
+                Self.name,
                 units=self.units,
                 axis_ids=cmor_axis_ids,
                 positive=self.positive,
@@ -455,28 +455,30 @@ class VarHandler(BaseVarHandler):
             coords="minimal",
             compat="override",
         )
-#        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
-        weights = "/glade/campaign/cesm/cesmdata/inputdata/cpl/gridmaps/ne30pg3/map_ne30pg3_to_1x1d_aave.nc"
-        ds_out = xr.Dataset()
         # for land variables ncol is lndgrid
-        if "lndgrid" in ds.dims:
-            ds = ds.rename_dims({"lndgrid" : "ncol"})
-        print(f"ds at this point {ds}")
+        if "ncol" in ds.dims or "lndgrid" in ds.dims:
+            #        weights = "/glade/work/wwieder/map_ne30pg3_to_fv0.9x1.25_scripgrids_conserve_nomask_c250108.nc"
+            weights = "/glade/campaign/cesm/cesmdata/inputdata/cpl/gridmaps/ne30pg3/map_ne30pg3_to_1x1d_aave.nc"
+            ds_out = xr.Dataset()
+            if "lndgrid" in ds.dims:
+                ds = ds.rename_dims({"lndgrid" : "ncol"})
+            print(f"ds at this point {ds}")
 
-        regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
-        for var in vars_to_filepaths:
-            ds_tmp = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
-            if not isinstance(ds_out, xr.Dataset):
-                ds_tmp = ds_tmp.to_dataset(name=var)
-            for v in ds_tmp.data_vars:
-                ds_out[v] = ds_tmp[v]
+            regridder = regrid_se_to_fv.make_se_regridder(weight_file=weights, Method="bilinear",)
+            for var in vars_to_filepaths:
+                ds_tmp = regrid_se_to_fv.regrid_se_data_bilinear(regridder, ds[var]).load()
+                if not isinstance(ds_out, xr.Dataset):
+                    ds_tmp = ds_tmp.to_dataset(name=var)
+                for v in ds_tmp.data_vars:
+                    ds_out[v] = ds_tmp[v]
                 
 
-        ds_out = ds_out.assign_attrs(ds.attrs)    
-        for var in ("lat_bnds","time_bnds", "time_bounds","hyam","hyai","hybm","hybi","P0"):
-            if var in ds:
-                ds_out[var] = ds[var].round(decimals=6)
-
+            ds_out = ds_out.assign_attrs(ds.attrs)    
+            for var in ("lat_bnds","time_bnds", "time_bounds","hyam","hyai","hybm","hybi","P0"):
+                if var in ds:
+                    ds_out[var] = ds[var].round(decimals=6)
+        else:
+            ds_out = ds
         logger.info("f time_dim is {time_dim}")
             # If the output CMIP variable has an alternative time dimension name (e.g.,
         # "time2") add that to the xr.Dataset by copying the "time" dimension.
@@ -571,26 +573,32 @@ class VarHandler(BaseVarHandler):
             axis_id_map["lev"] = self._get_cmor_lev_axis_id(ds)
 
         # Datasets will always have a "lat" and "lon" dimension.
+        latname = "lat"
+        cell_bounds = None
         if "lat_bnds" in ds:
             cell_bounds = ds["lat_bnds"].values
-        else:
-            cell_bounds = None
-        
+        elif "TLAT" in ds:
+            latname = "TLAT"
+#            cell_bounds = ds["latt_bounds"].values
+
         axis_id_map["lat"] = cmor.axis(
             "latitude",
-            units=ds["lat"].units,
-            coord_vals=ds["lat"].values,
+            units=ds[latname].units,
+            coord_vals=ds[latname].values,
             cell_bounds=cell_bounds,
         )
+        lonname = "lon"
+        cell_bounds = None
         if "lon_bnds" in ds:
             cell_bounds = ds["lon_bnds"].values
-        else:
-            cell_bounds = None
+        elif "TLON" in ds:
+            lonname = "TLON"
+#            cell_bounds = ds["lont_bounds"].values
         
         axis_id_map["lon"] = cmor.axis(
             "longitude",
-            units=ds["lon"].units,
-            coord_vals=ds["lon"].values,
+            units=ds[lonname].units,
+            coord_vals=ds[lonname].values,
             cell_bounds=cell_bounds,
         )
         if not (vert_dim is None or vert_dim == 'plev19'):

@@ -320,10 +320,26 @@
   formula: null
   positive: null
   levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
+- name: hur
+  units: "%"
+  raw_variables: [RELHUM]
+  table: CMIP6_day.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
 - name: hus
   units: "1"
   raw_variables: [Q]
   table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: { name: plev19, units: Pa, e3sm_axis_name: plev }
+- name: hus
+  units: "1"
+  raw_variables: [Q]
+  table: CMIP6_day.json
   unit_conversion: null
   formula: null
   positive: null
@@ -542,14 +558,14 @@
   formula: PRECT * 1000.0
   positive: null
   levels: null
-#- name: pr
-#  units: kg m-2 s-1
-#  raw_variables: [PRECT]
-#  table: CMIP6_day.json
-#  unit_conversion: null
-#  formula: PRECT * 1000.0
-#  positive: null
-#  levels: null
+- name: pr
+  units: kg m-2 s-1
+  raw_variables: [PRECT]
+  table: CMIP6_day.json
+  unit_conversion: null
+  formula: PRECT * 1000.0
+  positive: null
+  levels: null
 #- name: pr
 #  units: kg m-2 s-1
 #  raw_variables: [PRECT]
@@ -624,14 +640,14 @@
   formula: null
   positive: null
   levels: null
-#- name: psl
-#  units: Pa
-#  raw_variables: [PSL]
-#  table: CMIP6_6hrLev.json
-#  unit_conversion: null
-#  formula: null
-#  positive: null
-#  levels: null
+- name: psl
+  units: Pa
+  raw_variables: [PSL]
+  table: CMIP6_day.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
 - name: ra
   units: kg m-2 s-1
   raw_variables: [AR]
@@ -788,6 +804,22 @@
   units: m s-1
   raw_variables: [U10]
   table: CMIP6_Amon.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
+- name: sfcWind
+  units: m s-1
+  raw_variables: [U10]
+  table: CMIP6_day.json
+  unit_conversion: null
+  formula: null
+  positive: null
+  levels: null
+- name: siconc
+  units: "1"
+  raw_variables: [aice]
+  table: CMIP6_SImon.json
   unit_conversion: null
   formula: null
   positive: null

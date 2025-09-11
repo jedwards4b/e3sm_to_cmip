@@ -166,7 +166,7 @@ def mrfso(ds: xr.Dataset) -> xr.DataArray:
     result: np.ndarray = np.sum(var.values, axis=axis)
     result = np.where(result > 5000.0, 5000.0, result)
 
-    # Reconstruct the xarray.DataArray. Make sure not include "levgrnd" since
+    # Reconstruct the xarray.DataArray. Make sure not include "levsoi" since
     # it has been summed over.
     dims = [dim for dim in var.dims if dim != "levsoi"]
     coords = {dim: var[dim] for dim in dims}

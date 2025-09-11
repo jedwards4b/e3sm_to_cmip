@@ -804,7 +804,7 @@ class E3SMtoCMIP:
                     handler_variables.append("PS")
 
                 # find the input files this handler needs
-                if self.realm in ["atm", "lnd"]:
+                if self.realm in ["atm", "lnd", "cice"]:
                     vars_to_filepaths = {
                         var: [
                             os.path.join(self.input_path, x)  # type: ignore
@@ -896,7 +896,7 @@ class E3SMtoCMIP:
                     print("This variable needs a vertical interpolation ")
 
             # find the input files this handler needs
-            if self.realm in ["atm", "lnd"]:
+            if self.realm in ["atm", "lnd", "cice"]:
                 vars_to_filepaths = {
                     var: [
                         os.path.join(self.input_path, x)  # type: ignore

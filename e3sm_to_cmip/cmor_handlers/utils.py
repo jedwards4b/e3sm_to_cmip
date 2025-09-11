@@ -20,7 +20,7 @@ logger = _setup_logger(__name__)
 # Type aliases
 Frequency = Literal["mon", "day", "6hrLev", "6hrPlev", "6hrPlevPt", "3hr", "1hr"]
 
-Realm = Literal["atm", "lnd", "fx"]
+Realm = Literal["atm", "lnd", "cice"]
 REALMS = get_args(Realm)
 
 MPASRealm = Literal["mpaso", "mpassi", "SImon", "Omon"]
